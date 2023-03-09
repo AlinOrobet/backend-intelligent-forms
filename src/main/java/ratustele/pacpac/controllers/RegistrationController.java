@@ -10,6 +10,7 @@ import ratustele.pacpac.entities.tokens.VerificationToken;
 import ratustele.pacpac.events.RegistrationCompleteEvent;
 import ratustele.pacpac.models.AuthenticationResponse;
 import ratustele.pacpac.models.EntityModel;
+import ratustele.pacpac.models.RegisterResponse;
 import ratustele.pacpac.services.EmailService;
 import ratustele.pacpac.services.EntityService;
 import ratustele.pacpac.services.JwtService;
@@ -27,10 +28,15 @@ public class RegistrationController {
 
     @PostMapping("/createAccount")
     private String registerEntity(@RequestBody EntityModel model, final HttpServletRequest request) {
-        Entity entity = entityService.registerEntity(model);
-        publisher.publishEvent(new RegistrationCompleteEvent(entity,
-                applicationUrl(request)));
-        return "Account successfully created!";
+        RegisterResponse response = entityService.registerEntity(model);
+        if(response.getEntity() == null) {
+            return response.getResponseMessage();
+        } else {
+            publisher.publishEvent(new RegistrationCompleteEvent(
+                    response.getEntity(),
+                    applicationUrl(request)));
+            return "Account successfully created!";
+        }
     }
 
 //    @GetMapping("/verifyRegistration")
