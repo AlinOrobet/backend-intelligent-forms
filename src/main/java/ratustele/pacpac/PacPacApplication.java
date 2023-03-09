@@ -9,12 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @SpringBootApplication
 public class PacPacApplication {
+
 	@GetMapping("/message")
 	public String message(){
 		return "Hello World!";
 	}
+
+	@GetMapping("/authMessage")
+	public String authMessage() {
+		return "Login Works!";
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(PacPacApplication.class, args);
 	}
-
 }

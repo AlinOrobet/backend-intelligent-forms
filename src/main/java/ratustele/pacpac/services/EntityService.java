@@ -1,6 +1,7 @@
 package ratustele.pacpac.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ratustele.pacpac.entities.Entity;
@@ -63,5 +64,9 @@ public class EntityService {
         verificationToken.setToken(UUID.randomUUID().toString());
         verificationTokenRepository.save(verificationToken);
         return verificationToken;
+    }
+
+    public Entity findUserByToken(String token) {
+        return entityRepository.findById(verificationTokenRepository.findByToken(token).getId()).get();
     }
 }

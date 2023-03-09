@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import ratustele.pacpac.entities.Entity;
 import ratustele.pacpac.entities.tokens.VerificationToken;
 import ratustele.pacpac.events.RegistrationCompleteEvent;
+import ratustele.pacpac.models.AuthenticationResponse;
 import ratustele.pacpac.models.EntityModel;
 import ratustele.pacpac.services.EmailService;
 import ratustele.pacpac.services.EntityService;
+import ratustele.pacpac.services.JwtService;
 
 @RestController
 @RequestMapping("/registration")
@@ -21,6 +23,7 @@ public class RegistrationController {
     private final EntityService entityService;
     private final ApplicationEventPublisher publisher;
     private final EmailService emailService;
+    private final JwtService jwtService;
 
     @PostMapping("/createAccount")
     private String registerEntity(@RequestBody EntityModel model, final HttpServletRequest request) {
@@ -30,13 +33,25 @@ public class RegistrationController {
         return "Account successfully created!";
     }
 
+//    @GetMapping("/verifyRegistration")
+//    public String verifyRegistration(@RequestParam("token") String token) {
+//        String result = entityService.validateVerificationToken(token);
+//        if(result.equalsIgnoreCase("valid")) {
+//            return "Registration verified successfully!";
+//        } else {
+//            return "Failed to verify registration!";
+//        }
+//    }
+
     @GetMapping("/verifyRegistration")
-    public String verifyRegistration(@RequestParam("token") String token) {
+    public AuthenticationResponse verifyRegistration(@RequestParam("token") String token) {
         String result = entityService.validateVerificationToken(token);
         if(result.equalsIgnoreCase("valid")) {
-            return "Registration verified successfully!";
+            log.info(entityService.findUserByToken(token).toString());
+            var jwtToken = jwtService.generateToken(entityService.findUserByToken(token));
+            return AuthenticationResponse.builder().token(jwtToken).build();
         } else {
-            return "Failed to verify registration!";
+            return null;
         }
     }
 
