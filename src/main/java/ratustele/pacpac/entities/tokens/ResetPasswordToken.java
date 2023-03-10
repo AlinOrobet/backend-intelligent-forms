@@ -10,7 +10,7 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
-public class VerificationToken {
+public class ResetPasswordToken {
 
     private static final int EXPIRATION_TIME = 10;
 
@@ -23,10 +23,10 @@ public class VerificationToken {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "entityId",
             nullable = false,
-            foreignKey = @ForeignKey(name = "FK_ENTITY_VERIFY_TOKEN"))
+            foreignKey = @ForeignKey(name = "FK_ENTITY_PASSWORD_TOKEN"))
     private ratustele.pacpac.entities.Entity entity;
 
-    public VerificationToken(ratustele.pacpac.entities.Entity entity, String token) {
+    public ResetPasswordToken(ratustele.pacpac.entities.Entity entity, String token) {
         super();
         this.entity = entity;
         this.token = token;
@@ -36,7 +36,7 @@ public class VerificationToken {
     private Date calculateExpirationTime() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(new java.util.Date().getTime());
-        calendar.add(Calendar.MINUTE, VerificationToken.EXPIRATION_TIME);
+        calendar.add(Calendar.MINUTE, ResetPasswordToken.EXPIRATION_TIME);
         return new java.util.Date(calendar.getTime().getTime());
     }
 }

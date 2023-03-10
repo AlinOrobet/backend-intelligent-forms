@@ -8,14 +8,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import ratustele.pacpac.emails.EmailDetails;
 
-import java.util.Arrays;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
+
     @Value(value = "${spring.mail.username}")
     private String sender;
 

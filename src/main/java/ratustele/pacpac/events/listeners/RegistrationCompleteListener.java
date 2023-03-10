@@ -33,9 +33,10 @@ public class RegistrationCompleteListener
                 + "/registration/verifyRegistration?token="
                 + token;
 
-//        String message = "Click this link to verify your account:\n" + url;
-//        EmailDetails emailDetails = new EmailDetails(entity.getEmail(), message, "Verify Your Account!");
-//        emailService.sendSimpleMail(emailDetails);
+        // FIXME: emails do not work at the moment
+        String message = "Click this link to verify your account:\n" + url;
+        EmailDetails emailDetails = new EmailDetails(entity.getEmail(), message, "Verify Your Account!");
+        emailService.sendSimpleMail(emailDetails);
 
         // Send the email (mock at the moment)
         log.info("Click the following link to verify you account: {}", url);

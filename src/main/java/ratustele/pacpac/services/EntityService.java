@@ -1,24 +1,29 @@
 package ratustele.pacpac.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ratustele.pacpac.entities.Entity;
+import ratustele.pacpac.entities.tokens.ResetPasswordToken;
 import ratustele.pacpac.entities.tokens.VerificationToken;
 import ratustele.pacpac.models.EntityModel;
 import ratustele.pacpac.models.RegisterResponse;
 import ratustele.pacpac.repositories.EntityRepository;
+import ratustele.pacpac.repositories.ResetPasswordRepository;
 import ratustele.pacpac.repositories.VerificationTokenRepository;
 
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EntityService {
-
+    
     private final EntityRepository entityRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final ResetPasswordRepository resetPasswordRepository;
 
     public RegisterResponse registerEntity(EntityModel model) {
 
@@ -81,6 +86,42 @@ public class EntityService {
     }
 
     public Entity findUserByToken(String token) {
-        return entityRepository.findById(verificationTokenRepository.findByToken(token).getId()).get();
+        Optional<Entity> entity = entityRepository.findById(verificationTokenRepository.findByToken(token).getId());
+        return entity.orElse(null);
+    }
+
+    public Entity findUserByEmail(String email) {
+        Optional<Entity> entity = entityRepository.findByEmail(email);
+        return entity.orElse(null);
+    }
+
+    public void createPasswordResetTokenForUser(Entity entity, String token) {
+        ResetPasswordToken resetPasswordToken = new ResetPasswordToken(entity, token);
+        resetPasswordRepository.save(resetPasswordToken);
+    }
+
+    public String validatePasswordResetToken(String token) {
+        ResetPasswordToken resetPasswordToken = resetPasswordRepository.findByToken(token);
+        if(resetPasswordToken == null) {
+            return "invalid";
+        }
+
+        Calendar calendar = Calendar.getInstance();
+
+        if(resetPasswordToken.getExpirationTime().getTime() - calendar.getTime().getTime() <= 0) {
+            resetPasswordRepository.delete(resetPasswordToken);
+            return "expired";
+        }
+
+        return "valid";
+    }
+
+    public Optional<Entity> getUserByPasswordResetToken(String token) {
+        return Optional.ofNullable(resetPasswordRepository.findByToken(token).getEntity());
+    }
+
+    public void changePassword(Entity entity, String newPassword) {
+        entity.setPassword(passwordEncoder.encode(newPassword));
+        entityRepository.save(entity);
     }
 }

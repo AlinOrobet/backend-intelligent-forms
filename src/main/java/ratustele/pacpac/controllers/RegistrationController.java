@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
+import ratustele.pacpac.emails.EmailDetails;
 import ratustele.pacpac.entities.Entity;
 import ratustele.pacpac.entities.tokens.VerificationToken;
 import ratustele.pacpac.events.RegistrationCompleteEvent;
@@ -78,9 +79,10 @@ public class RegistrationController {
                 + verificationToken.getToken();
 
         // sendVerificationEmail()
-//        String message = "Click this link to verify your account:\n" + url;
-//        EmailDetails emailDetails = new EmailDetails(entity.getEmail(), message, "Verify Your Account!");
-//        emailService.sendSimpleMail(emailDetails);
+        // FIXME: emails are not working atm
+        String message = "Click this link to verify your account:\n" + url;
+        EmailDetails emailDetails = new EmailDetails(entity.getEmail(), message, "Verify Your Account!");
+        emailService.sendSimpleMail(emailDetails);
         log.info("Click this link to verify your account: {}", url);
     }
 

@@ -20,7 +20,7 @@ public class AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
-                        request.getPasswd()
+                        request.getPassword()
                 )
         );
 
