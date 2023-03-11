@@ -27,11 +27,22 @@ public class AuthenticationController {
     private final EntityService entityService;
     private final EmailService emailService;
 
+    /**
+     * API for authenticating.
+     * @param request Request body: server needs to receive valid email and password for success.
+     * @return Returns a JWT.
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
+    /**
+     * API for requesting a password change.
+     * @param resetPasswordRequest Request body: server needs to receive an email for success.
+     * @param request The HttpServletRequest
+     * @return Returns the link that will be sent in an email.
+     */
     @PostMapping("/resetPassword")
     public String resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest,
                                 HttpServletRequest request) {
@@ -47,6 +58,12 @@ public class AuthenticationController {
         return url;
     }
 
+    /**
+     * API for saving a password after it has been changed.
+     * @param token Reset password token stored in the database for the user.
+     * @param passwordModel Request body: server needs to receive an email for success.
+     * @return Returns a status message.
+     */
     @PostMapping("/savePassword")
     public String savePassword(@RequestParam("token") String token,
                                @RequestBody ResetPasswordRequest passwordModel) {
@@ -64,6 +81,11 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Method that creates a link based on the parameters of a request.
+     * @param request The HttpServletRequest.
+     * @return Returns a link.
+     */
     private String applicationUrl(HttpServletRequest request) {
         return "http://"
                 + request.getServerName()
@@ -71,17 +93,20 @@ public class AuthenticationController {
                 + request.getContextPath();
     }
 
+    /**
+     * Method sends reset password email to user.
+     * @param entity The User.
+     * @param applicationUrl Reset password link.
+     * @param token Reset password token stored in the database for the user.
+     * @return Returns the reset password link.
+     */
     private String passwordResetTokenMail(Entity entity, String applicationUrl, String token) {
         String url = applicationUrl
-                + "/authentication/savePassword?token="
+                + "/authentication/resetPassword?token="
                 + token;
-
-        // sendVerificationEmail()
-        // FIXME: emails do not work at the moment
-        String message = "Click this link to reset your password!:\n" + url;
+        String message = "Click this link to reset your password!\n" + url;
         EmailDetails emailDetails = new EmailDetails(entity.getEmail(), message, "Reset Password");
         emailService.sendSimpleMail(emailDetails);
-        log.info("Click this link to reset your password: {}", url);
         return url;
     }
 }

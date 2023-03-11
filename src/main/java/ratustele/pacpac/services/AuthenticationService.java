@@ -16,6 +16,11 @@ public class AuthenticationService {
     private final EntityRepository repository;
     private final JwtService jwtService;
 
+    /**
+     * Method that authenticates user and creates a JWT for him.
+     * @param request The request body: a valid email and password.
+     * @return Returns an error or an exception.
+     */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

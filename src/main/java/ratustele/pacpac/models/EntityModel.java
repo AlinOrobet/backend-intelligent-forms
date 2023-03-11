@@ -11,6 +11,7 @@ import ratustele.pacpac.enums.Subscription;
 @AllArgsConstructor
 public class EntityModel {
     private String entityName;
+    private String institutionName;
     private String email;
     private String entityAddress;
     private String password;

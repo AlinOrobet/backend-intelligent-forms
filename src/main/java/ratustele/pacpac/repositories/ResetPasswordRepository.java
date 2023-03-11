@@ -6,6 +6,5 @@ import ratustele.pacpac.entities.tokens.ResetPasswordToken;
 
 @Repository
 public interface ResetPasswordRepository extends JpaRepository<ResetPasswordToken, Long> {
-
     ResetPasswordToken findByToken(String token);
 }

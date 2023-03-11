@@ -21,24 +21,22 @@ public class RegistrationCompleteListener
     private final EntityService entityService;
     private final EmailService emailService;
 
+    /**
+     * Method that sends the Verify Account email.
+     * @param event The event that makes this method get called: Pressing the 'Create account button'.
+     */
     @Override
     public void onApplicationEvent(RegistrationCompleteEvent event) {
-        // Create VerificationToken
         Entity entity = event.getEntity();
         String token = UUID.randomUUID().toString();
         entityService.saveVerificationTokenForEntity(token, entity);
 
-        // Create VerifyRegistration link
         String url = event.getApplicationUrl()
                 + "/registration/verifyRegistration?token="
                 + token;
 
-        // FIXME: emails do not work at the moment
         String message = "Click this link to verify your account:\n" + url;
         EmailDetails emailDetails = new EmailDetails(entity.getEmail(), message, "Verify Your Account!");
         emailService.sendSimpleMail(emailDetails);
-
-        // Send the email (mock at the moment)
-        log.info("Click the following link to verify you account: {}", url);
     }
 }

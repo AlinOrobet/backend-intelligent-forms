@@ -1,5 +1,6 @@
 package ratustele.pacpac.entities;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,7 @@ public class Entity implements UserDetails {
     )
     private Long entityId;
     private String entityName;
+    private String institutionName;
     private String email;
     private String password;
     private String entityAddress;
@@ -42,7 +44,10 @@ public class Entity implements UserDetails {
     private EntityType entityType;
 
     private Long fiscalCode;
+
+    @Enumerated(EnumType.STRING)
     private Subscription subscription;
+
     private boolean isSubEnabled;
     private int numberOfForms = 0;
     private boolean enabled = false;
