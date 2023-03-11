@@ -27,6 +27,12 @@ public class RegistrationController {
     private final EmailService emailService;
     private final JwtService jwtService;
 
+    /**
+     * API for creating an account.
+     * @param model The request body: all the data needed to create an account.
+     * @param request The HttpServletRequest.
+     * @return Returns a status message.
+     */
     @PostMapping("/createAccount")
     private String registerEntity(@RequestBody EntityModel model, final HttpServletRequest request) {
         RegisterResponse response = entityService.registerEntity(model);
@@ -40,16 +46,11 @@ public class RegistrationController {
         }
     }
 
-//    @GetMapping("/verifyRegistration")
-//    public String verifyRegistration(@RequestParam("token") String token) {
-//        String result = entityService.validateVerificationToken(token);
-//        if(result.equalsIgnoreCase("valid")) {
-//            return "Registration verified successfully!";
-//        } else {
-//            return "Failed to verify registration!";
-//        }
-//    }
-
+    /**
+     * API for verifying an account.
+     * @param token The validation token stored in the database for the user.
+     * @return Returns a JWT (after verification, user will be logged in directly).
+     */
     @GetMapping("/verifyRegistration")
     public AuthenticationResponse verifyRegistration(@RequestParam("token") String token) {
         String result = entityService.validateVerificationToken(token);
@@ -62,6 +63,12 @@ public class RegistrationController {
         }
     }
 
+    /**
+     * API for requesting a resending of a Verify Account email.
+     * @param oldToken The old verification token that is stored in the database for the user.
+     * @param request The HttpServletRequest
+     * @return Returns a message.
+     */
     @GetMapping("/resendVerificationToken")
     public String resendVerificationToken(@RequestParam("token") String oldToken,
                                           HttpServletRequest request) {
@@ -71,6 +78,12 @@ public class RegistrationController {
         return "Verification link sent!";
     }
 
+    /**
+     * Method used to resend a Verify Account email.
+     * @param entity The User.
+     * @param applicationUrl The link of the web application.
+     * @param verificationToken The verification token stored in the database for a user.
+     */
     private void resendVerificationTokenMail(Entity entity,
                                              String applicationUrl,
                                              VerificationToken verificationToken) {
@@ -78,14 +91,16 @@ public class RegistrationController {
                 + "/registration/verifyRegistration?token="
                 + verificationToken.getToken();
 
-        // sendVerificationEmail()
-        // FIXME: emails are not working atm
         String message = "Click this link to verify your account:\n" + url;
         EmailDetails emailDetails = new EmailDetails(entity.getEmail(), message, "Verify Your Account!");
         emailService.sendSimpleMail(emailDetails);
-        log.info("Click this link to verify your account: {}", url);
     }
 
+    /**
+     * Method that creates a link based on the parameters of a request.
+     * @param request The HttpServletRequest.
+     * @return Returns a link.
+     */
     private String applicationUrl(HttpServletRequest request) {
         return "http://"
                 + request.getServerName()

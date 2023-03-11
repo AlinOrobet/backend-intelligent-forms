@@ -18,21 +18,22 @@ public class EmailService {
     @Value(value = "${spring.mail.username}")
     private String sender;
 
+    /**
+     * Method used to create mail that will be sent to user.
+     * @param details Email details.
+     * @return Returns a status message.
+     */
     public String sendSimpleMail(EmailDetails details) {
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
-
             mailMessage.setFrom(sender);
             mailMessage.setTo(details.getRecipient());
             mailMessage.setText(details.getMessageBody());
             mailMessage.setSubject(details.getSubject());
 
             javaMailSender.send(mailMessage);
-            log.info("MAIL SENT");
             return "Mail Sent Successfully!";
         } catch (Exception e) {
-            log.info("FAILED MAIL");
-            log.info(e.getMessage());
             return "Error while Sending Mail";
         }
     }
