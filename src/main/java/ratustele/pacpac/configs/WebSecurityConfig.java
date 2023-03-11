@@ -11,6 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+
+import java.util.List;
+
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,8 +35,6 @@ public class WebSecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
@@ -43,6 +48,17 @@ public class WebSecurityConfig {
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.cors(c -> {
+            CorsConfigurationSource cc = r -> {
+                CorsConfiguration cs = new CorsConfiguration();
+                cs.setAllowedOrigins(List.of("*"));
+                cs.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+                cs.setAllowedHeaders(List.of("*"));
+                return cs;
+            };
+
+            c.configurationSource(cc);
+        });
 
         return http.build();
     }

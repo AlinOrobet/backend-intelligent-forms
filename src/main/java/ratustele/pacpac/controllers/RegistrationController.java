@@ -20,6 +20,7 @@ import ratustele.pacpac.services.JwtService;
 @RequestMapping("/registration")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class RegistrationController {
 
     private final EntityService entityService;
