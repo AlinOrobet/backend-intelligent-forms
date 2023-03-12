@@ -13,6 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class WebSecurityConfig {
 
     private static final AntPathRequestMatcher[] WHITE_LIST_URLS = {
             new AntPathRequestMatcher("/registration/**"),
+            new AntPathRequestMatcher("/registration/createAccount"),
             new AntPathRequestMatcher("/message"),
             new AntPathRequestMatcher("/authentication/**")
     };
@@ -35,6 +37,8 @@ public class WebSecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .and()
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()

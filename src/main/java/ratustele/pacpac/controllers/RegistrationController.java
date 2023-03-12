@@ -20,7 +20,7 @@ import ratustele.pacpac.services.JwtService;
 @RequestMapping("/registration")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin
+@CrossOrigin("localhost:3000")
 public class RegistrationController {
 
     private final EntityService entityService;
@@ -35,7 +35,7 @@ public class RegistrationController {
      * @return Returns a status message.
      */
     @PostMapping("/createAccount")
-    private String registerEntity(@RequestBody EntityModel model, final HttpServletRequest request) {
+    private String registerEntity(@RequestBody EntityModel model, HttpServletRequest request) {
         RegisterResponse response = entityService.registerEntity(model);
         if(response.getEntity() == null) {
             return response.getResponseMessage();
